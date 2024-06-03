@@ -1,0 +1,216 @@
+2023 9618 MayJune 42
+
+Question 1
+
+# DECLARE Animals : ARRAY[0:9] OF STRING
+global Animals
+Animals = []
+
+Animals.append("horse")
+Animals.append("lion")
+Animals.append("rabbit")
+Animals.append("mouse")
+Animals.append("bird")
+Animals.append("deer")
+Animals.append("whale")
+Animals.append("elephant")
+Animals.append("kangaroo")
+Animals.append("tiger")
+
+def SortDescending():
+    ArrayLength = 10
+    for x in range(0 ,ArrayLength):
+        for Y in range(0, ArrayLength - x - 1):
+            if Animals[Y][0] < Animals[Y + 1][0]:
+                Temp = Animals[Y]
+                Animals[Y] = Animals[Y + 1]
+                Animals[Y + 1] = Temp
+
+
+SortDescending()
+for x in range(10):
+    print(Animals[x])
+
+
+
+Question 2)
+
+
+
+class SaleData():
+    #Public SaleID : STRING
+    #Public Quantity : INTEGER
+    def __init__(self, SaleIDP, QuantityP):
+        self.SaleID = SaleIDP
+        self.Quantity = QuantityP
+
+#DECLARE CircularQueue : ARRAY[0:4] OF SaleData
+global CircularQueue
+global Head
+global Tail
+global NumberOfItems
+CircularQueue = [SaleData("", -1)] * 5
+Head = 0
+Tail = 0
+NumberOfItems = 0
+
+
+def Enqueue(NewRecord):
+    global CircularQueue
+    global Head
+    global Tail
+    global NumberOfItems
+
+    if NumberOfItems == 5:
+        return -1
+    else:
+        CircularQueue[Tail] = NewRecord
+        if Tail == 4:
+            Tail = 0
+        else:
+            Tail = Tail + 1
+        NumberOfItems = NumberOfItems + 1
+        return 1
+
+
+def Dequeue():
+    global CircularQueue
+    global Head
+    global NumberOfItems
+
+    if NumberOfItems == 0:
+        return SaleData("", -1)
+    else:
+        record = CircularQueue[Head]
+        Head = Head + 1
+        if Head > 4:
+            Head = 0
+        NumberOfItems =NumberOfItems - 1
+        return record
+
+def EnterRecord():
+    ID = input("Enter the SaleID: ")
+    Quantity = int(input("Enter the Quantity: "))
+    record = SaleData(ID, Quantity)
+    if Enqueue(record) == -1:
+        print("Full")
+    else:
+        print("Stored")
+
+EnterRecord()
+EnterRecord()
+EnterRecord()
+EnterRecord()
+EnterRecord()
+EnterRecord()
+
+RecordCheck = Dequeue()
+if RecordCheck.SaleID == "":
+    print("Queue Is Empty")
+else:
+    print(RecordCheck.SaleID + " " + str(RecordCheck.Quantity))
+
+EnterRecord()
+
+for x in range(5):
+    Record = CircularQueue[x]
+    print(Record.SaleID + " " + str(Record.Quantity))
+
+
+
+
+
+
+Question 3) 
+
+class Employee():
+    #PRIVATE HourlyPay : REAL
+    #PRIVATE EmployeeNumber : STRING
+    #PRIVATE JobTitle : STRING
+    #PRIVATE PayYear2022 : ARRAY[0:51] OF REAl
+    def __init__(self, HourlyPayP, EmployeeNumberP, JobTitleP):
+        self.__HourlyPay = HourlyPayP
+        self.__EmployeeNumber = EmployeeNumberP
+        self.__JobTitle = JobTitleP
+        self.__PayYear2022 = [0.0] * 52
+
+    def GetEmployeeNumber(self):
+        return self.__EmployeeNumber
+
+    def SetPay(self, WeekNumber, Hourworked):
+        Pay = self.__HourlyPay * Hourworked
+        self.__PayYear2022[WeekNumber - 1] = Pay
+
+    def GetTotalPay(self):
+        Total = 0
+        for x in range(52):
+            Total = Total + self.__PayYear2022[x]
+
+        return Total
+
+class Manager(Employee):
+    #PRIVATE BonusValue : REAL
+    def __init__(self, HourlyPayP, EmployeeNumberP, JobTitleP, BonusValueP ):
+        super().__init__(HourlyPayP, EmployeeNumberP, JobTitleP)
+        self.__BonusValue = BonusValueP
+
+    def SetPay(self, WeekNumber, Hourworked):
+        NewHours = Hourworked + (Hourworked * (self.__BonusValue/100))
+        super().SetPay(WeekNumber, NewHours)
+
+#DECALRE EmplyeeArray : ARRAY[0:7] OF Employee
+EmployeeArray = [Employee(0.0, "", "")] * 8
+
+MaybeBonus = "" # Junior Developer
+JobTitle = ""
+try:
+    Employeefile = open("Employees.txt", "r")
+    for x in range(8):
+        HourlyPay = float(Employeefile.readline().strip())
+        EmployeeNumber = Employeefile.readline().strip()
+        MaybeBonus = Employeefile.readline().strip()
+        try:
+            Bonus = float(MaybeBonus) # float("Junior Developer")
+            JobTitle = Employeefile.readline().strip()
+            EmployeeArray[x] = Manager(HourlyPay, EmployeeNumber, JobTitle, Bonus)
+        except:
+            JobTitle = MaybeBonus
+            EmployeeArray[x] = Employee(HourlyPay, EmployeeNumber, JobTitle)
+
+    Employeefile.close()
+except IOError:
+    print("File Not Found")
+
+def EnterHours():
+    try:
+        HoursFile = open("HoursWeek1.txt", "r")
+        for x in range(8):
+            EmployeeID = HoursFile.readline().strip()
+            Hoursworked = float(HoursFile.readline().strip())
+            for y in range(8):
+                if EmployeeArray[y].GetEmployeeNumber() == EmployeeID:
+                    EmployeeArray[y].SetPay(1, Hoursworked)
+        HoursFile.close()
+    except IOError:
+        print("File Does Not Exist")
+
+EnterHours()
+for x in range(8):
+    EmployeeNumber = EmployeeArray[x].GetEmployeeNumber()
+    TotalPay = EmployeeArray[x].GetTotalPay()
+    print(EmployeeNumber + " "  + str(TotalPay))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
